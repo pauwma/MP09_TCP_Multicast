@@ -11,21 +11,11 @@ public class SrvTcpAdivina_Obj {
     private int port;
     private SecretNum ns;
     private Tauler t;
-    private InetAddress multicastAddress;
-    private int multicastPort;
-    private MulticastSocket multicastSocket;
 
-    private SrvTcpAdivina_Obj(int port, InetAddress multicastAddress, int multicastPort) {
+    private SrvTcpAdivina_Obj(int port ) {
         this.port = port;
         ns = new SecretNum(100);
         t = new Tauler();
-        this.multicastAddress = multicastAddress;
-        this.multicastPort = multicastPort;
-        try {
-            multicastSocket = new MulticastSocket();
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
     }
 
     private void listen() {
@@ -38,9 +28,13 @@ public class SrvTcpAdivina_Obj {
                 //Llançar Thread per establir la comunicació
                 //sumem 1 al numero de jugadors
                 t.addNUmPlayers();
-                ThreadSevidorAdivina_Obj FilServidor = new ThreadSevidorAdivina_Obj(clientSocket, ns, t, multicastSocket, multicastAddress, multicastPort);
+                ThreadSevidorAdivina_Obj FilServidor = new ThreadSevidorAdivina_Obj(clientSocket, ns, t);
                 Thread client = new Thread(FilServidor);
                 client.start();
+                if (t.isFinJoc()) {
+                    serverSocket.close();
+                    break;
+                }
             }
         } catch (IOException ex) {
             Logger.getLogger(SrvTcpAdivina_Obj.class.getName()).log(Level.SEVERE, null, ex);
@@ -48,9 +42,7 @@ public class SrvTcpAdivina_Obj {
     }
 
     public static void main(String[] args) throws UnknownHostException {
-        InetAddress multicastAddress = InetAddress.getByName("224.0.0.1");
-        int multicastPort = 5559;
-        SrvTcpAdivina_Obj srv = new SrvTcpAdivina_Obj(5558, multicastAddress, multicastPort);
+        SrvTcpAdivina_Obj srv = new SrvTcpAdivina_Obj(5558);
         srv.listen();
     }
 }

@@ -46,7 +46,11 @@ public class ClientTcpAdivina_Obj extends Thread {
                 case 2:	msg = "Més gran"; break;
                 case 1: msg = "Més petit"; break;
                 case 0:
-                    System.out.println("Correcte");
+                    if (t.isFinJoc()) {
+                        System.out.println("Joc finalitzat.");
+                    } else {
+                        System.out.println("Correcte");
+                    }
                     System.out.println(t);
                     continueConnected = false;
                     continue;
@@ -66,8 +70,6 @@ public class ClientTcpAdivina_Obj extends Thread {
                     e.printStackTrace();
                 }
             }
-
-
         }
 
         close(socket);
